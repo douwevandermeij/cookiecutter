@@ -68,10 +68,11 @@ def apply_overwrites_to_context(context, overwrite_context):
                     f"{overwrite} provided for choice variable {variable}, "
                     f"but the choices are {context_value}."
                 )
-        elif isinstance(context_value, dict) and isinstance(overwrite, dict):
-            # Partially overwrite some keys in original dict
-            apply_overwrites_to_context(context_value, overwrite)
-            context[variable] = context_value
+        # elif isinstance(context_value, dict) and isinstance(overwrite, dict):
+        # TODO this is nice, but kills having nested lists instead of choices
+        #     # Partially overwrite some keys in original dict
+        #     apply_overwrites_to_context(context_value, overwrite)
+        #     context[variable] = context_value
         else:
             # Simply overwrite the value for this variable
             context[variable] = overwrite
@@ -150,7 +151,12 @@ def generate_file(project_dir, infile, context, env, skip_if_file_exists=False):
     # Render the path to the output file (not including the root project dir)
     outfile_tmpl = env.from_string(infile)
 
-    outfile = os.path.join(project_dir, outfile_tmpl.render(**context))
+    outfile_tmpl_rendered = outfile_tmpl.render(**context)
+    if context['cookiecutter']['_remove_template_extension']:
+        ext = context['cookiecutter']['_remove_template_extension']
+        if os.path.splitext(outfile_tmpl_rendered)[-1] == ext:
+            outfile_tmpl_rendered = outfile_tmpl_rendered.replace(ext, "")
+    outfile = os.path.join(project_dir, outfile_tmpl_rendered)
     file_name_is_empty = os.path.isdir(outfile)
     if file_name_is_empty:
         logger.debug('The resulting file name is empty: %s', outfile)

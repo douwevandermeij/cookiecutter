@@ -35,6 +35,7 @@ def cookiecutter(
     skip_if_file_exists=False,
     accept_hooks=True,
     keep_project_on_failure=False,
+    remove_template_extension="",
 ):
     """
     Run Cookiecutter just as if using it from the command line.
@@ -58,6 +59,7 @@ def cookiecutter(
     :param accept_hooks: Accept pre and post hooks if set to `True`.
     :param keep_project_on_failure: If `True` keep generated project directory even when
         generation fails
+    :param remove_template_extension: Remove this extension from the template files
     """
     if replay and ((no_input is not False) or (extra_context is not None)):
         err_msg = (
@@ -114,6 +116,9 @@ def cookiecutter(
 
         # include output+dir in the context dict
         context['cookiecutter']['_output_dir'] = os.path.abspath(output_dir)
+
+        # include remove_template_extension
+        context['cookiecutter']['_remove_template_extension'] = remove_template_extension
 
         dump(config_dict['replay_dir'], template_name, context)
 
