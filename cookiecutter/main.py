@@ -36,6 +36,7 @@ def cookiecutter(
     accept_hooks=True,
     keep_project_on_failure=False,
     remove_template_extension="",
+    force_overwrite_context=False,
 ):
     """
     Run Cookiecutter just as if using it from the command line.
@@ -60,6 +61,7 @@ def cookiecutter(
     :param keep_project_on_failure: If `True` keep generated project directory even when
         generation fails
     :param remove_template_extension: Remove this extension from the template files
+    :param force_overwrite_context: Force overwrite (or inject) context variables/parameters
     """
     if replay and ((no_input is not False) or (extra_context is not None)):
         err_msg = (
@@ -96,6 +98,13 @@ def cookiecutter(
     else:
         context_file = os.path.join(repo_dir, 'cookiecutter.json')
         logger.debug('context_file is %s', context_file)
+
+        # include force_overwrite_context
+        if not config_dict['default_context']:
+            config_dict['default_context'] = {
+                '_force_overwrite_context': force_overwrite_context
+            }
+        config_dict['default_context']['_force_overwrite_context'] = force_overwrite_context
 
         context = generate_context(
             context_file=context_file,
