@@ -410,6 +410,9 @@ def generate_files(
                     if delete_project_on_failure:
                         rmtree(project_dir)
                     msg = f"Unable to create file '{infile}'"
+                    context = {
+                        "template_folder": context["cookiecutter"]["_template"],
+                    }
                     raise UndefinedVariableInTemplate(msg, err, context) from err
 
     if accept_hooks:
