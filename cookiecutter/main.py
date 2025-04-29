@@ -114,8 +114,9 @@ def cookiecutter(
 
         # prompt the user to manually configure at the command line.
         # except when 'no-input' flag is set
-        with import_patch:
-            context['cookiecutter'] = prompt_for_config(context, no_input)
+        if not no_input:
+            with import_patch:
+                context['cookiecutter'] = prompt_for_config(context, no_input)
 
         # include template dir or url in the context dict
         context['cookiecutter']['_template'] = template
